@@ -9,10 +9,12 @@ import FuturisticPortfolio from '../components/FuturisticPortfolio';
 import FuturisticAbout from '../components/FuturisticAbout';
 import FuturisticContact from '../components/FuturisticContact';
 import FuturisticFooter from '../components/FuturisticFooter';
+import ScrollProgress from '../components/ScrollProgress';
 ---
 
 <MainLayout pageClass="">
 <div class="overflow-x-hidden bg-black relative">
+<ScrollProgress client:only="react" />
 <StartAnimation client:only="react" />
 <InteractiveBackground client:only="react" />
 <FuturisticNavigation client:only="react" />
@@ -26,152 +28,259 @@ import FuturisticFooter from '../components/FuturisticFooter';
 </MainLayout>
 
 <style is:global>
-/* Smooth scrolling */
-html {
-scroll-behavior: smooth;
-background-color: #000;
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Custom scrollbar - Minimal design */
+/* Smooth scrolling with optimization */
+html {
+  scroll-behavior: smooth;
+  background-color: #000;
+}
+
+/* Hardware acceleration */
+.will-change-transform {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimized scrollbar - Minimal design */
 ::-webkit-scrollbar {
-width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-background: #000;
+  background: #000;
 }
 
 ::-webkit-scrollbar-thumb {
-background: linear-gradient(to bottom, #3b82f6, #a855f7);
-border-radius: 10px;
+  background: linear-gradient(to bottom, #3b82f6, #a855f7);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-background: linear-gradient(to bottom, #60a5fa, #c084fc);
+  background: linear-gradient(to bottom, #60a5fa, #c084fc);
 }
 
 /* Prevent horizontal scroll */
 body {
-overflow-x: hidden;
-background-color: #000;
+  overflow-x: hidden;
+  background-color: #000;
 }
 
-/* Ensure smooth scroll offset for fixed nav */
+/* Smooth scroll offset for fixed nav */
 section {
-scroll-margin-top: 80px;
+  scroll-margin-top: 80px;
 }
 
 /* Selection styling */
 ::selection {
-background: rgba(59, 130, 246, 0.3);
-color: #fff;
+  background: rgba(59, 130, 246, 0.3);
+  color: #fff;
 }
 
 /* Prevent text selection on interactive elements */
 button {
--webkit-user-select: none;
-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* Performance optimizations */
-* {
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
-}
-
-/* Hardware acceleration for animations */
-.will-change-transform {
-will-change: transform;
-}
-
-/* Optimize images */
+/* Optimize images with lazy loading */
 img {
-content-visibility: auto;
+  content-visibility: auto;
+  loading: lazy;
 }
 
-/* Reduce motion for users who prefer it */
+/* GPU acceleration for animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+  transform: translateZ(0);
+}
+
+/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-*,
-*::before,
-*::after {
-animation-duration: 0.01ms !important;
-animation-iteration-count: 1 !important;
-transition-duration: 0.01ms !important;
-scroll-behavior: auto !important;
-}
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Optimize for touch devices */
+/* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-/* Disable hover effects on touch devices for better performance */
-*:hover {
-transition-duration: 0ms !important;
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  *:hover {
+    transition-duration: 0ms !important;
+  }
 }
+
+/* iPad specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .will-change-transform {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Content visibility for off-screen content */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize canvas and video elements */
+canvas,
+video {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 </style>
 
 <script>
-// Start animation logic
+// Performance monitoring
+const measurePerformance = () => {
+  if ('PerformanceObserver' in window) {
+    // Monitor long tasks
+    try {
+      const observer = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (entry.duration > 50) {
+            console.warn('Long task detected:', entry.duration.toFixed(2) + 'ms');
+          }
+        }
+      });
+      observer.observe({ entryTypes: ['longtask'] });
+    } catch (e) {
+      // Longtask API not supported
+    }
+  }
+};
+
+// Start animation logic with sessionStorage
 let startAnimationCompleted = false;
 
 function handleStartAnimationComplete() {
-startAnimationCompleted = true;
+  startAnimationCompleted = true;
+  sessionStorage.setItem('hasVisited', 'true');
 }
 
-// Listen for the start animation completion
 window.addEventListener('startAnimationComplete', handleStartAnimationComplete);
 
-// Smooth reveal of content after start animation
+// Skip animation if already visited
 document.addEventListener('DOMContentLoaded', () => {
-// Check if user has visited before
-const hasVisited = sessionStorage.getItem('hasVisited');
-
-if (hasVisited) {
-// Skip start animation if already visited in this session
-const startAnimation = document.querySelector('[data-start-animation]') as HTMLElement;
-if (startAnimation) {
-startAnimation.style.display = 'none';
-}
-} else {
-// Mark as visited
-sessionStorage.setItem('hasVisited', 'true');
-}
+  const hasVisited = sessionStorage.getItem('hasVisited');
+  
+  if (hasVisited) {
+    const startAnimation = document.querySelector('[data-start-animation]') as HTMLElement;
+    if (startAnimation) {
+      startAnimation.style.display = 'none';
+    }
+  }
+  
+  // Start performance monitoring
+  measurePerformance();
 });
 
-// Performance optimizations
-if ('requestIdleCallback' in window) {
-// Defer non-critical operations
-requestIdleCallback(() => {
-// Preload next sections
-const sections = document.querySelectorAll('section');
-sections.forEach((section) => {
-const observer = new IntersectionObserver(
-(entries) => {
-entries.forEach((entry) => {
-if (entry.isIntersecting) {
-entry.target.classList.add('in-view');
-}
-});
-},
-{ rootMargin: '50px' }
-);
-observer.observe(section);
-});
-});
-}
-
-// Optimize scroll performance
+// Optimized scroll handling with passive listeners
 let ticking = false;
+let lastScrollY = 0;
+
 function optimizedScroll() {
-if (!ticking) {
-window.requestAnimationFrame(() => {
-// Scroll-based logic here if needed
-ticking = false;
-});
-ticking = true;
-}
+  lastScrollY = window.scrollY;
+  
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      // Add scroll-based optimizations here if needed
+      ticking = false;
+    });
+    ticking = true;
+  }
 }
 
 window.addEventListener('scroll', optimizedScroll, { passive: true });
+
+// Intersection Observer for lazy animations
+if ('IntersectionObserver' in window && 'requestIdleCallback' in window) {
+  requestIdleCallback(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            // Unobserve after animation to save resources
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { 
+        rootMargin: '50px',
+        threshold: 0.1
+      }
+    );
+    
+    document.querySelectorAll('section').forEach((section) => {
+      observer.observe(section);
+    });
+  });
+} else {
+  // Fallback for browsers without requestIdleCallback
+  setTimeout(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '50px', threshold: 0.1 }
+    );
+    
+    document.querySelectorAll('section').forEach((section) => {
+      observer.observe(section);
+    });
+  }, 100);
+}
+
+// Preload critical resources
+const preloadCriticalResources = () => {
+  // Preconnect to external domains if any
+  const link = document.createElement('link');
+  link.rel = 'preconnect';
+  link.href = 'https://fonts.googleapis.com';
+  document.head.appendChild(link);
+};
+
+// Run preload on idle
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(preloadCriticalResources);
+} else {
+  setTimeout(preloadCriticalResources, 1);
+}
+
+// Memory cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  // Clean up any large objects or listeners
+  sessionStorage.setItem('lastVisit', Date.now().toString());
+});
 </script>
 </MainLayout>

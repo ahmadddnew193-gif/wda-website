@@ -60,6 +60,35 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss(), patchViteErrorOverlay()],
+    build: {
+      // Optimize chunks for better caching
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
+            'animation-vendor': ['framer-motion', 'gsap'],
+          },
+        },
+      },
+      // Enable minification
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true, // Remove console.logs in production
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        },
+      },
+      // Optimize CSS
+      cssMinify: true,
+      // Asset handling
+      assetsInlineLimit: 4096, // Inline assets smaller than 4kb
+      chunkSizeWarningLimit: 1000,
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'three', 'framer-motion', 'gsap'],
+    },
     server: {
       watch: {
         usePolling: true, // Enable polling for file watching in Docker
