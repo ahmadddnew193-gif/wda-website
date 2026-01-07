@@ -3,49 +3,59 @@ import { useEffect, useState } from 'react';
 export default function StartAnimation() {
   const [isVisible, setIsVisible] = useState(true);
   const [stage, setStage] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Check if user has already seen the animation
-    const hasVisited = sessionStorage.getItem('hasVisited');
+    // Ensure component is mounted before starting
+    setIsMounted(true);
+
+    // Check if user has already seen the animation THIS SESSION
+    const hasVisitedThisSession = sessionStorage.getItem('hasVisited');
     
-    if (hasVisited) {
+    if (hasVisitedThisSession) {
       setIsVisible(false);
       return;
     }
 
-    // Stage 0->1: Initial reveal (0-400ms)
-    const stage1 = setTimeout(() => setStage(1), 100);
-    
-    // Stage 1->2: Logo particles (400-1000ms)
-    const stage2 = setTimeout(() => setStage(2), 500);
-    
-    // Stage 2->3: Hologram effect (1000-1800ms)
-    const stage3 = setTimeout(() => setStage(3), 1100);
-    
-    // Stage 3->4: Full power (1800-2600ms)
-    const stage4 = setTimeout(() => setStage(4), 1900);
-    
-    // Stage 4->5: Fade out (2600-3400ms)
-    const stage5 = setTimeout(() => setStage(5), 2700);
-    
-    // Complete (3400ms)
-    const complete = setTimeout(() => {
-      setIsVisible(false);
-      sessionStorage.setItem('hasVisited', 'true');
-      window.dispatchEvent(new Event('startAnimationComplete'));
-    }, 3500);
+    // Force a small delay to ensure everything is loaded
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Stage 0->1: Initial reveal (0-400ms)
+        const stage1 = setTimeout(() => setStage(1), 100);
+        
+        // Stage 1->2: Logo particles (400-1000ms)
+        const stage2 = setTimeout(() => setStage(2), 500);
+        
+        // Stage 2->3: Hologram effect (1000-1800ms)
+        const stage3 = setTimeout(() => setStage(3), 1100);
+        
+        // Stage 3->4: Full power (1800-2600ms)
+        const stage4 = setTimeout(() => setStage(4), 1900);
+        
+        // Stage 4->5: Fade out (2600-3400ms)
+        const stage5 = setTimeout(() => setStage(5), 2700);
+        
+        // Complete (3400ms)
+        const complete = setTimeout(() => {
+          setIsVisible(false);
+          sessionStorage.setItem('hasVisited', 'true');
+          window.dispatchEvent(new Event('startAnimationComplete'));
+        }, 3500);
 
-    return () => {
-      clearTimeout(stage1);
-      clearTimeout(stage2);
-      clearTimeout(stage3);
-      clearTimeout(stage4);
-      clearTimeout(stage5);
-      clearTimeout(complete);
-    };
+        return () => {
+          clearTimeout(stage1);
+          clearTimeout(stage2);
+          clearTimeout(stage3);
+          clearTimeout(stage4);
+          clearTimeout(stage5);
+          clearTimeout(complete);
+        };
+      });
+    });
   }, []);
 
-  if (!isVisible) return null;
+  // Don't render anything until mounted (prevents SSR issues)
+  if (!isMounted || !isVisible) return null;
 
   return (
     <div
@@ -54,6 +64,9 @@ export default function StartAnimation() {
       style={{
         opacity: stage === 5 ? 0 : 1,
         transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+        willChange: 'opacity',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
       }}
     >
       {/* Futuristic grid background */}
@@ -69,6 +82,8 @@ export default function StartAnimation() {
           transform: stage >= 2 ? 'perspective(1000px) rotateX(60deg) scale(2)' : 'perspective(1000px) rotateX(60deg) scale(1.5)',
           transformOrigin: 'center center',
           transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+          willChange: 'transform, opacity',
+          WebkitTransform: stage >= 2 ? 'perspective(1000px) rotateX(60deg) scale(2)' : 'perspective(1000px) rotateX(60deg) scale(1.5)',
         }}
       />
 
@@ -79,6 +94,7 @@ export default function StartAnimation() {
           background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(59, 130, 246, 0.03) 2px, rgba(59, 130, 246, 0.03) 4px)',
           opacity: stage >= 3 ? 0.6 : 0,
           transition: 'opacity 0.6s ease-out',
+          willChange: 'opacity',
         }}
       />
 
@@ -95,6 +111,8 @@ export default function StartAnimation() {
               opacity: stage >= 2 ? 1 : 0,
               transform: stage >= 2 ? 'scale(1)' : 'scale(0)',
               transition: `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.15}s`,
+              willChange: 'transform, opacity',
+              WebkitTransform: stage >= 2 ? 'scale(1)' : 'scale(0)',
             }}
           />
         ))}
@@ -102,27 +120,39 @@ export default function StartAnimation() {
 
       {/* Particle field */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: i % 3 === 0 
-                ? 'rgba(59, 130, 246, 0.8)' 
-                : i % 3 === 1 
-                ? 'rgba(168, 85, 247, 0.8)' 
-                : 'rgba(236, 72, 153, 0.8)',
-              opacity: stage >= 2 ? (stage >= 4 ? 0 : 1) : 0,
-              transform: stage >= 2 
-                ? `translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px) scale(${Math.random() * 2})` 
-                : 'translate(0, 0) scale(0)',
-              transition: `all ${1.2 + Math.random() * 0.5}s cubic-bezier(0.4, 0, 0.2, 1) ${Math.random() * 0.3}s`,
-              boxShadow: stage >= 3 ? `0 0 10px currentColor` : 'none',
-            }}
-          />
-        ))}
+        {[...Array(20)].map((_, i) => {
+          const randomX = (Math.random() - 0.5) * 100;
+          const randomY = (Math.random() - 0.5) * 100;
+          const randomScale = Math.random() * 2;
+          const randomDelay = Math.random() * 0.3;
+          const randomDuration = 1.2 + Math.random() * 0.5;
+          
+          return (
+            <div
+              key={i}
+              className="absolute w-1 h-1 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: i % 3 === 0 
+                  ? 'rgba(59, 130, 246, 0.8)' 
+                  : i % 3 === 1 
+                  ? 'rgba(168, 85, 247, 0.8)' 
+                  : 'rgba(236, 72, 153, 0.8)',
+                opacity: stage >= 2 ? (stage >= 4 ? 0 : 1) : 0,
+                transform: stage >= 2 
+                  ? `translate(${randomX}px, ${randomY}px) scale(${randomScale})` 
+                  : 'translate(0, 0) scale(0)',
+                transition: `all ${randomDuration}s cubic-bezier(0.4, 0, 0.2, 1) ${randomDelay}s`,
+                boxShadow: stage >= 3 ? `0 0 10px currentColor` : 'none',
+                willChange: 'transform, opacity',
+                WebkitTransform: stage >= 2 
+                  ? `translate(${randomX}px, ${randomY}px) scale(${randomScale})` 
+                  : 'translate(0, 0) scale(0)',
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Center hologram */}
@@ -134,6 +164,8 @@ export default function StartAnimation() {
             opacity: stage >= 1 ? 1 : 0,
             transform: stage >= 1 ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(50px)',
             transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            willChange: 'transform, opacity',
+            WebkitTransform: stage >= 1 ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(50px)',
           }}
         >
           {/* Hologram scan effect */}
@@ -147,6 +179,7 @@ export default function StartAnimation() {
               className="absolute inset-x-0 h-8 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent"
               style={{
                 animation: stage >= 2 && stage < 4 ? 'scan 2s ease-in-out infinite' : 'none',
+                willChange: 'transform',
               }}
             />
           </div>
@@ -302,6 +335,8 @@ export default function StartAnimation() {
               opacity: stage >= 4 ? 1 : 0,
               transform: stage >= 4 ? 'scale(1.2)' : 'scale(0.8)',
               transition: 'all 0.8s ease-out',
+              willChange: 'transform, opacity',
+              WebkitTransform: stage >= 4 ? 'scale(1.2)' : 'scale(0.8)',
             }}
           />
         </div>
@@ -313,6 +348,8 @@ export default function StartAnimation() {
             opacity: stage >= 3 ? 1 : 0,
             transform: stage >= 3 ? 'translateY(0)' : 'translateY(30px)',
             transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            willChange: 'transform, opacity',
+            WebkitTransform: stage >= 3 ? 'translateY(0)' : 'translateY(30px)',
           }}
         >
           <h1 className="text-4xl md:text-6xl font-black text-center mb-4">
@@ -320,6 +357,8 @@ export default function StartAnimation() {
               className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
               style={{
                 textShadow: stage >= 4 ? '0 0 20px rgba(59, 130, 246, 0.5)' : 'none',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
               WEB DESIGN AGENCY
@@ -340,10 +379,12 @@ export default function StartAnimation() {
 
         {/* Status bar */}
         <div 
-          className="absolute bottom-20 left-1/2 -translate-x-1/2 w-64"
+          className="absolute bottom-20 left-1/2 w-64"
           style={{
             opacity: stage >= 3 ? 1 : 0,
             transition: 'opacity 0.6s ease-out',
+            transform: 'translateX(-50%)',
+            WebkitTransform: 'translateX(-50%)',
           }}
         >
           <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
@@ -353,6 +394,7 @@ export default function StartAnimation() {
                 width: stage >= 4 ? '100%' : stage >= 3 ? '60%' : '0%',
                 transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                 boxShadow: '0 0 10px rgba(59, 130, 246, 0.6)',
+                willChange: 'width',
               }}
             />
           </div>
@@ -375,6 +417,7 @@ export default function StartAnimation() {
               opacity: stage >= 2 ? 0.6 : 0,
               transition: `opacity 0.4s ease-out ${i * 0.1}s`,
               transform: `rotate(${pos.rotate})`,
+              WebkitTransform: `rotate(${pos.rotate})`,
             }}
           >
             <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-400 to-transparent" />
@@ -390,6 +433,15 @@ export default function StartAnimation() {
           }
           100% {
             transform: translateY(280%);
+          }
+        }
+        
+        @-webkit-keyframes scan {
+          0% {
+            -webkit-transform: translateY(-100%);
+          }
+          100% {
+            -webkit-transform: translateY(280%);
           }
         }
       `}</style>
