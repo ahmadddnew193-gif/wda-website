@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-
 const socialLinks = [
   { name: 'Twitter', icon: '𝕏', href: '#' },
   { name: 'LinkedIn', icon: 'in', href: '#' },
@@ -61,13 +59,7 @@ export default function FuturisticFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand Section with Icon */}
           <div className="lg:col-span-2">
-            <motion.div
-              className="flex items-center gap-3 mb-4"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
+            <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 flex items-center justify-center">
                 <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
@@ -87,122 +79,126 @@ export default function FuturisticFooter() {
               <h3 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
                 W.D.A
               </h3>
-            </motion.div>
-            <motion.p
-              className="text-gray-400 text-lg mb-6 max-w-md"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
+            </div>
+            <p className="text-gray-400 text-lg mb-6 max-w-md">
               Creating extraordinary digital experiences that push the boundaries of design and technology.
-            </motion.p>
+            </p>
 
             {/* Social Links */}
-            <motion.div
-              className="flex gap-4"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+            <div className="flex gap-4">
               {socialLinks.map((social) => (
-                <motion.a
+                <a
                   key={social.name}
                   href={social.href}
-                  className="w-12 h-12 rounded-full bg-gray-900/50 border border-gray-800 flex items-center justify-center text-gray-400 hover:border-blue-500 hover:text-white hover:bg-blue-500/10 transition-all"
-                  whileHover={{ y: -5, scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
                   aria-label={social.name}
+                  className="social-link w-12 h-12 rounded-full bg-gray-900/50 border border-gray-800 flex items-center justify-center text-gray-400 transition-all duration-200"
                 >
-                  <span className="text-lg">{social.icon}</span>
-                </motion.a>
+                  <span className="text-xl">{social.icon}</span>
+                </a>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Footer Links */}
-          {footerLinks.map((section, sectionIndex) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 * (sectionIndex + 1) }}
-            >
-              <h4 className="text-white font-bold text-lg mb-4">{section.title}</h4>
+          {footerLinks.map((section) => (
+            <div key={section.title}>
+              <h4 className="text-white font-bold text-lg mb-4">
+                {section.title}
+              </h4>
               <ul className="space-y-3">
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <motion.button
+                    <button
                       onClick={() => scrollToSection(link.href)}
-                      className="text-gray-400 hover:text-white transition-colors"
-                      whileHover={{ x: 5 }}
+                      className="footer-link text-gray-400 transition-colors duration-200"
                     >
                       {link.name}
-                    </motion.button>
+                    </button>
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
 
+        {/* Newsletter */}
+        <div className="mb-16 p-8 rounded-2xl bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-gray-800">
+          <div className="max-w-2xl">
+            <h3 className="text-2xl font-bold text-white mb-2">Stay Updated</h3>
+            <p className="text-gray-400 mb-6">
+              Subscribe to our newsletter for the latest updates and insights.
+            </p>
+            <form className="flex gap-4 flex-col sm:flex-row">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="newsletter-input flex-1 px-4 py-3 bg-black/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:border-blue-500"
+              />
+              <button
+                type="submit"
+                className="newsletter-button px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg transition-all duration-200"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+
         {/* Bottom Bar */}
-        <motion.div
-          className="pt-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="pt-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm">
             © {new Date().getFullYear()} W.D.A. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <motion.button
-              onClick={() => scrollToSection('#')}
-              className="text-gray-500 text-sm hover:text-white transition-colors"
-              whileHover={{ y: -2 }}
-            >
+            <button onClick={() => scrollToSection('#')} className="footer-link text-gray-500 text-sm transition-colors duration-200">
               Privacy Policy
-            </motion.button>
-            <motion.button
-              onClick={() => scrollToSection('#')}
-              className="text-gray-500 text-sm hover:text-white transition-colors"
-              whileHover={{ y: -2 }}
-            >
+            </button>
+            <button onClick={() => scrollToSection('#')} className="footer-link text-gray-500 text-sm transition-colors duration-200">
               Terms of Service
-            </motion.button>
+            </button>
+            <button onClick={() => scrollToSection('#')} className="footer-link text-gray-500 text-sm transition-colors duration-200">
+              Cookie Policy
+            </button>
           </div>
-        </motion.div>
-
-        {/* Scroll to Top Button - Positioned higher to not overlap with scroll progress */}
-        <motion.button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-24 right-8 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg z-50"
-          initial={{ opacity: 0, scale: 0 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: false }}
-          whileHover={{ scale: 1.1, y: -5 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="Scroll to top"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 10l7-7m0 0l7 7m-7-7v18"
-            />
-          </svg>
-        </motion.button>
+        </div>
       </div>
+
+      <style jsx>{`
+        .social-link:hover {
+          transform: translateY(-4px);
+          background: rgba(59, 130, 246, 0.1);
+          border-color: rgba(59, 130, 246, 0.3);
+          color: white;
+        }
+
+        .footer-link:hover {
+          color: white;
+        }
+
+        .newsletter-input:hover {
+          border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .newsletter-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .newsletter-button:active {
+          transform: translateY(0);
+        }
+
+        /* iPad touch optimization */
+        @media (hover: none) and (pointer: coarse) {
+          .social-link:active {
+            transform: scale(0.95);
+          }
+          
+          .newsletter-button:active {
+            transform: scale(0.98);
+          }
+        }
+      `}</style>
     </footer>
   );
 }
