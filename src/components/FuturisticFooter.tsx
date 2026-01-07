@@ -59,17 +59,35 @@ export default function FuturisticFooter() {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
-          {/* Brand Section */}
+          {/* Brand Section with Icon */}
           <div className="lg:col-span-2">
-            <motion.h3
-              className="text-4xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400"
+            <motion.div
+              className="flex items-center gap-3 mb-4"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              W.D.A
-            </motion.h3>
+              <div className="w-12 h-12 flex items-center justify-center">
+                <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="wda-footer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: '#3b82f6', stopOpacity: 1}} />
+                      <stop offset="50%" style={{stopColor: '#a855f7', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: '#ec4899', stopOpacity: 1}} />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="32" cy="32" r="28" stroke="url(#wda-footer-gradient)" strokeWidth="2" fill="none" opacity="0.3"/>
+                  <text x="32" y="40" fontFamily="Montserrat, sans-serif" fontSize="20" fontWeight="700" textAnchor="middle" fill="url(#wda-footer-gradient)">WDA</text>
+                  <circle cx="16" cy="16" r="2" fill="url(#wda-footer-gradient)" opacity="0.8"/>
+                  <circle cx="48" cy="16" r="2" fill="url(#wda-footer-gradient)" opacity="0.8"/>
+                  <circle cx="32" cy="52" r="2" fill="url(#wda-footer-gradient)" opacity="0.8"/>
+                </svg>
+              </div>
+              <h3 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                W.D.A
+              </h3>
+            </motion.div>
             <motion.p
               className="text-gray-400 text-lg mb-6 max-w-md"
               initial={{ opacity: 0, x: -20 }}
@@ -159,7 +177,7 @@ export default function FuturisticFooter() {
           </div>
         </motion.div>
 
-        {/* Scroll to Top Button - Moved higher */}
+        {/* Scroll to Top Button - Positioned higher to not overlap with scroll progress */}
         <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="fixed bottom-24 right-8 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg z-50"

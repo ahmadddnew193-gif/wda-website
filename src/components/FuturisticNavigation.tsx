@@ -46,14 +46,32 @@ export default function FuturisticNavigation() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
+            {/* Logo with Icon */}
             <motion.button
               onClick={() => scrollToSection('#')}
-              className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400"
+              className="flex items-center gap-3 group"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              W.D.A
+              <div className="w-10 h-10 flex items-center justify-center">
+                <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="wda-nav-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: '#3b82f6', stopOpacity: 1}} />
+                      <stop offset="50%" style={{stopColor: '#a855f7', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: '#ec4899', stopOpacity: 1}} />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="32" cy="32" r="28" stroke="url(#wda-nav-gradient)" strokeWidth="2" fill="none" opacity="0.3" className="group-hover:opacity-50 transition-opacity"/>
+                  <text x="32" y="40" fontFamily="Montserrat, sans-serif" fontSize="20" fontWeight="700" textAnchor="middle" fill="url(#wda-nav-gradient)">WDA</text>
+                  <circle cx="16" cy="16" r="2" fill="url(#wda-nav-gradient)" opacity="0.8"/>
+                  <circle cx="48" cy="16" r="2" fill="url(#wda-nav-gradient)" opacity="0.8"/>
+                  <circle cx="32" cy="52" r="2" fill="url(#wda-nav-gradient)" opacity="0.8"/>
+                </svg>
+              </div>
+              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 group-hover:from-blue-300 group-hover:to-purple-300 transition-all">
+                W.D.A
+              </span>
             </motion.button>
 
             {/* Desktop Navigation */}

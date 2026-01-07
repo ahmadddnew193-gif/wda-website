@@ -45,9 +45,9 @@ export default function ScrollProgress() {
         />
       </div>
 
-      {/* Percentage Indicator */}
+      {/* Percentage Indicator - Positioned closer to scroll-to-top button */}
       <div 
-        className="fixed top-4 right-4 z-[9998] pointer-events-none"
+        className="fixed bottom-28 right-20 z-[9998] pointer-events-none"
         style={{
           opacity: scrollProgress > 5 ? 1 : 0,
           transition: 'opacity 0.3s ease',
