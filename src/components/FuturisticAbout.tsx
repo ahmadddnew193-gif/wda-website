@@ -79,34 +79,6 @@ export default function FuturisticAbout() {
               </div>
             ))}
           </div>
-
-          {/* Stats Section - Simplified */}
-          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="stat-item">
-              <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">
-                500+
-              </div>
-              <div className="text-gray-400 font-semibold">Projects</div>
-            </div>
-            <div className="stat-item">
-              <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
-                250+
-              </div>
-              <div className="text-gray-400 font-semibold">Clients</div>
-            </div>
-            <div className="stat-item">
-              <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-red-400 mb-2">
-                10+
-              </div>
-              <div className="text-gray-400 font-semibold">Years</div>
-            </div>
-            <div className="stat-item">
-              <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-2">
-                99%
-              </div>
-              <div className="text-gray-400 font-semibold">Satisfaction</div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -119,14 +91,6 @@ export default function FuturisticAbout() {
         .feature-card:hover {
           transform: translateY(-8px);
           border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .stat-item {
-          transition: transform 0.3s ease;
-        }
-
-        .stat-item:hover {
-          transform: scale(1.05);
         }
 
         /* iPad touch optimization */
