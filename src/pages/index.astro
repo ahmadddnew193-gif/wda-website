@@ -1,0 +1,177 @@
+---
+import MainLayout from '../layouts/main.astro';
+import StartAnimation from '../components/StartAnimation';
+import InteractiveBackground from '../components/InteractiveBackground';
+import FuturisticNavigation from '../components/FuturisticNavigation';
+import FuturisticHero from '../components/FuturisticHero';
+import FuturisticServices from '../components/FuturisticServices';
+import FuturisticPortfolio from '../components/FuturisticPortfolio';
+import FuturisticAbout from '../components/FuturisticAbout';
+import FuturisticContact from '../components/FuturisticContact';
+import FuturisticFooter from '../components/FuturisticFooter';
+---
+
+<MainLayout pageClass="">
+<div class="overflow-x-hidden bg-black relative">
+<StartAnimation client:only="react" />
+<InteractiveBackground client:only="react" />
+<FuturisticNavigation client:only="react" />
+<FuturisticHero client:only="react" />
+<FuturisticServices client:only="react" />
+<FuturisticPortfolio client:only="react" />
+<FuturisticAbout client:only="react" />
+<FuturisticContact client:only="react" />
+<FuturisticFooter client:only="react" />
+</div>
+</MainLayout>
+
+<style is:global>
+/* Smooth scrolling */
+html {
+scroll-behavior: smooth;
+background-color: #000;
+}
+
+/* Custom scrollbar - Minimal design */
+::-webkit-scrollbar {
+width: 10px;
+}
+
+::-webkit-scrollbar-track {
+background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+background: linear-gradient(to bottom, #3b82f6, #a855f7);
+border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+background: linear-gradient(to bottom, #60a5fa, #c084fc);
+}
+
+/* Prevent horizontal scroll */
+body {
+overflow-x: hidden;
+background-color: #000;
+}
+
+/* Ensure smooth scroll offset for fixed nav */
+section {
+scroll-margin-top: 80px;
+}
+
+/* Selection styling */
+::selection {
+background: rgba(59, 130, 246, 0.3);
+color: #fff;
+}
+
+/* Prevent text selection on interactive elements */
+button {
+-webkit-user-select: none;
+user-select: none;
+}
+
+/* Performance optimizations */
+* {
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+
+/* Hardware acceleration for animations */
+.will-change-transform {
+will-change: transform;
+}
+
+/* Optimize images */
+img {
+content-visibility: auto;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
+scroll-behavior: auto !important;
+}
+}
+
+/* Optimize for touch devices */
+@media (hover: none) and (pointer: coarse) {
+/* Disable hover effects on touch devices for better performance */
+*:hover {
+transition-duration: 0ms !important;
+}
+}
+</style>
+
+<script>
+// Start animation logic
+let startAnimationCompleted = false;
+
+function handleStartAnimationComplete() {
+startAnimationCompleted = true;
+}
+
+// Listen for the start animation completion
+window.addEventListener('startAnimationComplete', handleStartAnimationComplete);
+
+// Smooth reveal of content after start animation
+document.addEventListener('DOMContentLoaded', () => {
+// Check if user has visited before
+const hasVisited = sessionStorage.getItem('hasVisited');
+
+if (hasVisited) {
+// Skip start animation if already visited in this session
+const startAnimation = document.querySelector('[data-start-animation]') as HTMLElement;
+if (startAnimation) {
+startAnimation.style.display = 'none';
+}
+} else {
+// Mark as visited
+sessionStorage.setItem('hasVisited', 'true');
+}
+});
+
+// Performance optimizations
+if ('requestIdleCallback' in window) {
+// Defer non-critical operations
+requestIdleCallback(() => {
+// Preload next sections
+const sections = document.querySelectorAll('section');
+sections.forEach((section) => {
+const observer = new IntersectionObserver(
+(entries) => {
+entries.forEach((entry) => {
+if (entry.isIntersecting) {
+entry.target.classList.add('in-view');
+}
+});
+},
+{ rootMargin: '50px' }
+);
+observer.observe(section);
+});
+});
+}
+
+// Optimize scroll performance
+let ticking = false;
+function optimizedScroll() {
+if (!ticking) {
+window.requestAnimationFrame(() => {
+// Scroll-based logic here if needed
+ticking = false;
+});
+ticking = true;
+}
+}
+
+window.addEventListener('scroll', optimizedScroll, { passive: true });
+</script>
+</MainLayout>

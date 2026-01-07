@@ -1,0 +1,13 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "wda-website",
+	"pages_build_output_dir": "./dist",
+	"compatibility_date": "2025-04-15",
+	"compatibility_flags": [
+		"nodejs_compat"
+	]
+}
