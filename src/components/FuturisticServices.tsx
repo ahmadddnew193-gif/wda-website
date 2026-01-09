@@ -20,18 +20,6 @@ const services = [
     gradient: 'from-cyan-500 to-blue-500',
   },
   {
-    title: 'E-Commerce',
-    description: 'Complete online store solutions with seamless shopping experiences.',
-    icon: '🛒',
-    gradient: 'from-pink-500 to-red-500',
-  },
-  {
-    title: 'SEO Optimization',
-    description: 'Strategic optimization to improve your search engine rankings.',
-    icon: '🚀',
-    gradient: 'from-green-500 to-emerald-500',
-  },
-  {
     title: 'Brand Identity',
     description: 'Comprehensive branding solutions that make your business stand out.',
     icon: '✨',
@@ -133,3 +121,4 @@ export default function FuturisticServices() {
     </div>
   );
 }
+

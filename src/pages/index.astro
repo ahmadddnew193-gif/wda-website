@@ -1,7 +1,8 @@
+
 ---
 import MainLayout from '../layouts/main.astro';
 import StartAnimation from '../components/StartAnimation';
-import InteractiveBackground from '../components/InteractiveBackground';
+import CodeBlocksBackground from '../components/CodeBlocksBackground';
 import FuturisticNavigation from '../components/FuturisticNavigation';
 import FuturisticHero from '../components/FuturisticHero';
 import FuturisticServices from '../components/FuturisticServices';
@@ -16,7 +17,7 @@ import ScrollProgress from '../components/ScrollProgress';
 <div class="overflow-x-hidden bg-black relative">
 <ScrollProgress client:only="react" />
 <StartAnimation client:only="react" />
-<InteractiveBackground client:only="react" />
+<CodeBlocksBackground client:only="react" />
 <FuturisticNavigation client:only="react" />
 <FuturisticHero client:only="react" />
 <FuturisticServices client:only="react" />
@@ -284,3 +285,4 @@ window.addEventListener('beforeunload', () => {
 });
 </script>
 </MainLayout>
+
