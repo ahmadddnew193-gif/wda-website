@@ -6,7 +6,7 @@ const projects = [
     id: 1,
     title: 'WDA Mall',
     description: 'A modern e-commerce mall platform featuring stunning product showcases, smooth navigation, and an immersive shopping experience.',
-    image: 'https://wda-mall.pages.dev/og-image.png',
+    image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"%3E%3Cdefs%3E%3ClinearGradient id="bg1" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%230ea5e9;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%2306b6d4;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="600" height="400" fill="url(%23bg1)"/%3E%3Cg opacity="0.1"%3E%3Ccircle cx="150" cy="100" r="80" fill="white"/%3E%3Ccircle cx="450" cy="300" r="100" fill="white"/%3E%3C/g%3E%3Cg transform="translate(300, 200)"%3E%3Cpath d="M-40,-30 L-40,30 L40,30 L40,-30 Z" fill="white" opacity="0.9"/%3E%3Cpath d="M-30,-40 L0,-60 L30,-40 L30,-30 L-30,-30 Z" fill="white" opacity="0.95"/%3E%3Crect x="-25" y="-25" width="50" height="40" fill="%23059669" opacity="0.8"/%3E%3Cpath d="M-15,-15 L-15,5 M-5,-15 L-5,5 M5,-15 L5,5 M15,-15 L15,5" stroke="white" stroke-width="2"/%3E%3C/g%3E%3Ctext x="300" y="280" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle" opacity="0.9"%3EWDA MALL%3C/text%3E%3C/svg%3E',
     link: 'https://wda-mall.pages.dev/',
     tags: ['E-Commerce', 'React', 'Modern UI'],
     gradient: 'from-blue-500 to-cyan-500',
@@ -15,7 +15,7 @@ const projects = [
     id: 2,
     title: 'Restaurant Demo',
     description: 'An elegant restaurant website with beautiful menu displays, reservation system, and appetizing food photography.',
-    image: 'https://wda-website-demo.pages.dev/og-image.png',
+    image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"%3E%3Cdefs%3E%3ClinearGradient id="bg2" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%23a855f7;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%23ec4899;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="600" height="400" fill="url(%23bg2)"/%3E%3Cg opacity="0.1"%3E%3Ccircle cx="100" cy="300" r="90" fill="white"/%3E%3Ccircle cx="500" cy="100" r="110" fill="white"/%3E%3C/g%3E%3Cg transform="translate(220, 200)"%3E%3Cellipse cx="0" cy="0" rx="70" ry="50" fill="white" opacity="0.9"/%3E%3Cellipse cx="0" cy="-5" rx="60" ry="40" fill="%23ef4444" opacity="0.8"/%3E%3Crect x="-50" y="-2" width="100" height="8" fill="%23fbbf24" opacity="0.9" rx="2"/%3E%3Ccircle cx="-30" cy="0" r="8" fill="%2322c55e" opacity="0.8"/%3E%3Ccircle cx="30" cy="0" r="8" fill="%23ef4444" opacity="0.8"/%3E%3Ccircle cx="0" cy="-15" r="6" fill="%23fbbf24" opacity="0.8"/%3E%3C/g%3E%3Cg transform="translate(380, 200)"%3E%3Cpath d="M0,-60 L0,40" stroke="white" stroke-width="4" opacity="0.9"/%3E%3Cpath d="M-15,-50 Q-15,-60 -5,-60 L5,-60 Q15,-60 15,-50 L15,0 Q15,10 5,10 L-5,10 Q-15,10 -15,0 Z" fill="none" stroke="white" stroke-width="3" opacity="0.9"/%3E%3Cpath d="M-10,-55 L-10,-10 M-5,-55 L-5,-10 M0,-55 L0,-10 M5,-55 L5,-10 M10,-55 L10,-10" stroke="white" stroke-width="1.5" opacity="0.7"/%3E%3C/g%3E%3Ctext x="300" y="320" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="white" text-anchor="middle" opacity="0.9"%3ERESTAURANT%3C/text%3E%3C/svg%3E',
     link: 'https://wda-website-demo.pages.dev/',
     tags: ['Restaurant', 'Web Design', 'Interactive'],
     gradient: 'from-purple-500 to-pink-500',
@@ -202,4 +202,5 @@ export default function FuturisticPortfolio() {
     </section>
   );
 }
+
 
