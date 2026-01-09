@@ -6,7 +6,7 @@ const projects = [
     id: 1,
     title: 'WDA Mall',
     description: 'A modern e-commerce mall platform featuring stunning product showcases, smooth navigation, and an immersive shopping experience.',
-    image: '/api/placeholder/600/400',
+    image: 'https://wda-mall.pages.dev/og-image.png',
     link: 'https://wda-mall.pages.dev/',
     tags: ['E-Commerce', 'React', 'Modern UI'],
     gradient: 'from-blue-500 to-cyan-500',
@@ -15,7 +15,7 @@ const projects = [
     id: 2,
     title: 'Restaurant Demo',
     description: 'An elegant restaurant website with beautiful menu displays, reservation system, and appetizing food photography.',
-    image: '/api/placeholder/600/400',
+    image: 'https://wda-website-demo.pages.dev/og-image.png',
     link: 'https://wda-website-demo.pages.dev/',
     tags: ['Restaurant', 'Web Design', 'Interactive'],
     gradient: 'from-purple-500 to-pink-500',
@@ -73,9 +73,12 @@ export default function FuturisticPortfolio() {
         {/* Projects grid */}
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {projects.map((project, index) => (
-            <div
+            <a
               key={project.id}
-              className={`group relative transition-all duration-700 ${
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group relative block transition-all duration-700 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
               style={{ transitionDelay: `${index * 200}ms` }}
@@ -83,24 +86,25 @@ export default function FuturisticPortfolio() {
               onMouseLeave={() => setHoveredProject(null)}
             >
               {/* Card container with optimized hover effects */}
-              <div className="relative bg-gradient-to-br from-gray-900/50 to-gray-800/30 rounded-2xl overflow-hidden border border-gray-800/50 transition-all duration-500 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/10">
+              <div className="relative bg-gradient-to-br from-gray-900/50 to-gray-800/30 rounded-2xl overflow-hidden border border-gray-800/50 transition-all duration-500 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/10 hover:scale-[1.02] active:scale-[0.98]">
                 {/* Gradient overlay on hover - optimized */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 transition-opacity duration-500 ${hoveredProject === project.id ? 'opacity-10' : ''}`} />
 
-                {/* Image placeholder with gradient */}
+                {/* Image with real screenshot */}
                 <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-                  {/* Animated gradient background */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-20`} />
+                  {/* Real website image */}
+                  <img 
+                    src={project.image} 
+                    alt={project.title}
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                    onError={(e) => {
+                      // Fallback to gradient if image fails
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                   
                   {/* Overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
-                  
-                  {/* Icon indicator */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className={`p-6 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 transition-all duration-500 ${hoveredProject === project.id ? 'scale-110' : 'scale-100'}`}>
-                      <Smartphone className="w-12 h-12 text-blue-400" />
-                    </div>
-                  </div>
 
                   {/* External link icon on hover */}
                   <div className={`absolute top-4 right-4 p-3 rounded-full bg-blue-500/90 backdrop-blur-sm transition-all duration-300 ${hoveredProject === project.id ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
@@ -133,21 +137,16 @@ export default function FuturisticPortfolio() {
                   </p>
 
                   {/* CTA Button */}
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-95"
-                  >
+                  <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30">
                     <span>Visit Website</span>
                     <ExternalLink className="w-4 h-4" />
-                  </a>
+                  </div>
                 </div>
 
                 {/* Bottom gradient line */}
                 <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${project.gradient} transition-opacity duration-500 ${hoveredProject === project.id ? 'opacity-100' : 'opacity-0'}`} />
               </div>
-            </div>
+            </a>
           ))}
         </div>
 
@@ -203,3 +202,4 @@ export default function FuturisticPortfolio() {
     </section>
   );
 }
+
