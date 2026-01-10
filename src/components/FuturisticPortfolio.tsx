@@ -1,59 +1,116 @@
-import { ExternalLink } from 'lucide-react';
+import { useRef, useState } from 'react';
+
+const projects = [
+  {
+    title: 'WDA Mall',
+    description: 'Modern e-commerce platform with stunning product showcases and seamless shopping experience.',
+    icon: '🛍️',
+    gradient: 'from-blue-500 to-cyan-500',
+    url: 'https://wda-mall.pages.dev/',
+  },
+  {
+    title: 'Restaurant Demo',
+    description: 'Elegant restaurant website with beautiful menu displays and reservation system.',
+    icon: '🍽️',
+    gradient: 'from-purple-500 to-pink-500',
+    url: 'https://wda-website-demo.pages.dev/',
+  },
+];
 
 export default function FuturisticPortfolio() {
+  const containerRef = useRef(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   return (
-    <section id="portfolio" className="py-32 bg-black">
-      <div className="container mx-auto px-6 max-w-5xl">
-        
-        {/* Title */}
-        <h2 className="text-5xl md:text-7xl font-bold text-center mb-20">
-          <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Our Projects
-          </span>
-        </h2>
+    <div 
+      id="portfolio" 
+      className="relative bg-black py-32 px-6 overflow-hidden"
+    >
+      {/* Simplified background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-blue-950/5 to-black pointer-events-none" />
 
-        {/* Project 1 */}
-        <div className="mb-32">
-          <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            WDA Mall
-          </h3>
-          <p className="text-gray-400 text-xl mb-8">
-            Modern e-commerce platform with stunning design
-          </p>
-          <a
-            href="https://wda-mall.pages.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold rounded-xl transition"
-          >
-            Visit WDA Mall
-            <ExternalLink className="w-6 h-6" />
-          </a>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div ref={containerRef}>
+          {/* Header */}
+          <div className="text-center mb-20">
+            <span className="inline-block px-4 py-2 rounded-full bg-blue-500/5 border border-blue-500/20 text-blue-300 text-sm font-semibold mb-6">
+              Our Work
+            </span>
+
+            <h2 className="text-5xl md:text-7xl font-black mb-6">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                Featured Projects
+              </span>
+            </h2>
+
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Explore our latest creations
+            </p>
+          </div>
+
+          {/* Projects Grid - Exact same as services */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {projects.map((project, index) => (
+              <a
+                key={project.title}
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="project-card group relative p-8 rounded-2xl bg-gray-900/30 border border-gray-800 backdrop-blur-sm overflow-hidden cursor-pointer"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onTouchStart={() => setHoveredIndex(index)}
+                onTouchEnd={() => setHoveredIndex(null)}
+              >
+                {/* Icon */}
+                <div
+                  className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${project.gradient} mb-6 text-3xl transition-transform duration-300 group-hover:scale-110`}
+                >
+                  {project.icon}
+                </div>
+
+                {/* Content */}
+                <h3 className="text-2xl font-bold text-white mb-3">
+                  {project.title}
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  {project.description}
+                </p>
+
+                {/* Arrow indicator */}
+                <div
+                  className={`absolute bottom-6 right-6 text-white transition-all duration-300 ${
+                    hoveredIndex === index ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
+                  }`}
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
-
-        {/* Divider */}
-        <div className="h-px bg-gray-800 mb-32" />
-
-        {/* Project 2 */}
-        <div className="mb-32">
-          <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Restaurant Demo
-          </h3>
-          <p className="text-gray-400 text-xl mb-8">
-            Elegant restaurant website with beautiful menus
-          </p>
-          <a
-            href="https://wda-website-demo.pages.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-10 py-5 bg-purple-600 hover:bg-purple-700 text-white text-lg font-bold rounded-xl transition"
-          >
-            Visit Restaurant Demo
-            <ExternalLink className="w-6 h-6" />
-          </a>
-        </div>
-
       </div>
-    </section>
+
+      <style jsx>{`
+        .project-card {
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                      border-color 0.3s ease;
+        }
+
+        .project-card:hover {
+          transform: translateY(-8px);
+          border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* iPad touch optimization */
+        @media (hover: none) and (pointer: coarse) {
+          .project-card:active {
+            transform: scale(0.98);
+          }
+        }
+      `}</style>
+    </div>
   );
 }
