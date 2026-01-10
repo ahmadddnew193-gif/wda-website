@@ -2,447 +2,225 @@ import { useEffect, useState } from 'react';
 
 export default function StartAnimation() {
   const [isVisible, setIsVisible] = useState(true);
-  const [stage, setStage] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Ensure component is mounted before starting
-    setIsMounted(true);
-
-    // Check if user has already seen the animation THIS SESSION
-    const hasVisitedThisSession = sessionStorage.getItem('hasVisited');
+    // Check if user has already seen the animation
+    const hasVisited = sessionStorage.getItem('hasVisited');
     
-    if (hasVisitedThisSession) {
+    if (hasVisited) {
       setIsVisible(false);
       return;
     }
 
-    // Force a small delay to ensure everything is loaded
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        // Stage 0->1: Initial reveal (0-400ms)
-        const stage1 = setTimeout(() => setStage(1), 100);
-        
-        // Stage 1->2: Logo particles (400-1000ms)
-        const stage2 = setTimeout(() => setStage(2), 500);
-        
-        // Stage 2->3: Hologram effect (1000-1800ms)
-        const stage3 = setTimeout(() => setStage(3), 1100);
-        
-        // Stage 3->4: Full power (1800-2600ms)
-        const stage4 = setTimeout(() => setStage(4), 1900);
-        
-        // Stage 4->5: Fade out (2600-3400ms)
-        const stage5 = setTimeout(() => setStage(5), 2700);
-        
-        // Complete (3400ms)
-        const complete = setTimeout(() => {
+    // Simple progress animation
+    const duration = 2500; // 2.5 seconds
+    const startTime = Date.now();
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      
+      setProgress(newProgress);
+      
+      if (newProgress < 100) {
+        requestAnimationFrame(animate);
+      } else {
+        // Complete animation
+        setTimeout(() => {
           setIsVisible(false);
           sessionStorage.setItem('hasVisited', 'true');
           window.dispatchEvent(new Event('startAnimationComplete'));
-        }, 3500);
+        }, 300);
+      }
+    };
+    
+    // Start animation after small delay
+    const timeout = setTimeout(() => {
+      requestAnimationFrame(animate);
+    }, 100);
 
-        return () => {
-          clearTimeout(stage1);
-          clearTimeout(stage2);
-          clearTimeout(stage3);
-          clearTimeout(stage4);
-          clearTimeout(stage5);
-          clearTimeout(complete);
-        };
-      });
-    });
+    return () => clearTimeout(timeout);
   }, []);
 
-  // Don't render anything until mounted (prevents SSR issues)
-  if (!isMounted || !isVisible) return null;
+  if (!isVisible) return null;
 
   return (
     <div
       data-start-animation
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black"
       style={{
-        opacity: stage === 5 ? 0 : 1,
-        transition: 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-        willChange: 'opacity',
-        WebkitBackfaceVisibility: 'hidden',
-        backfaceVisibility: 'hidden',
+        opacity: progress >= 100 ? 0 : 1,
+        transition: 'opacity 0.3s ease-out',
       }}
     >
-      {/* Futuristic grid background */}
+      {/* Animated gradient background */}
       <div 
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-20"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.3), rgba(168, 85, 247, 0.2), transparent)',
+          animation: 'pulse 3s ease-in-out infinite',
+        }}
+      />
+
+      {/* Grid background */}
+      <div 
+        className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px)
+            linear-gradient(rgba(59, 130, 246, 0.5) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.5) 1px, transparent 1px)
           `,
           backgroundSize: '50px 50px',
-          opacity: stage >= 2 ? 1 : 0,
-          transform: stage >= 2 ? 'perspective(1000px) rotateX(60deg) scale(2)' : 'perspective(1000px) rotateX(60deg) scale(1.5)',
-          transformOrigin: 'center center',
-          transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-          willChange: 'transform, opacity',
-          WebkitTransform: stage >= 2 ? 'perspective(1000px) rotateX(60deg) scale(2)' : 'perspective(1000px) rotateX(60deg) scale(1.5)',
         }}
       />
 
-      {/* Scanning lines effect */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(59, 130, 246, 0.03) 2px, rgba(59, 130, 246, 0.03) 4px)',
-          opacity: stage >= 3 ? 0.6 : 0,
-          transition: 'opacity 0.6s ease-out',
-          willChange: 'opacity',
-        }}
-      />
-
-      {/* Energy rings */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full border-2"
-            style={{
-              width: `${200 + i * 100}px`,
-              height: `${200 + i * 100}px`,
-              borderColor: `rgba(59, 130, 246, ${0.3 - i * 0.1})`,
-              opacity: stage >= 2 ? 1 : 0,
-              transform: stage >= 2 ? 'scale(1)' : 'scale(0)',
-              transition: `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.15}s`,
-              willChange: 'transform, opacity',
-              WebkitTransform: stage >= 2 ? 'scale(1)' : 'scale(0)',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Particle field */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => {
-          const randomX = (Math.random() - 0.5) * 100;
-          const randomY = (Math.random() - 0.5) * 100;
-          const randomScale = Math.random() * 2;
-          const randomDelay = Math.random() * 0.3;
-          const randomDuration = 1.2 + Math.random() * 0.5;
-          
-          return (
-            <div
-              key={i}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                background: i % 3 === 0 
-                  ? 'rgba(59, 130, 246, 0.8)' 
-                  : i % 3 === 1 
-                  ? 'rgba(168, 85, 247, 0.8)' 
-                  : 'rgba(236, 72, 153, 0.8)',
-                opacity: stage >= 2 ? (stage >= 4 ? 0 : 1) : 0,
-                transform: stage >= 2 
-                  ? `translate(${randomX}px, ${randomY}px) scale(${randomScale})` 
-                  : 'translate(0, 0) scale(0)',
-                transition: `all ${randomDuration}s cubic-bezier(0.4, 0, 0.2, 1) ${randomDelay}s`,
-                boxShadow: stage >= 3 ? `0 0 10px currentColor` : 'none',
-                willChange: 'transform, opacity',
-                WebkitTransform: stage >= 2 
-                  ? `translate(${randomX}px, ${randomY}px) scale(${randomScale})` 
-                  : 'translate(0, 0) scale(0)',
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {/* Center hologram */}
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Logo container with holographic effect */}
+      <div className="relative z-10 flex flex-col items-center px-4">
+        {/* Logo */}
         <div 
-          className="relative mb-8"
+          className="mb-8 relative"
           style={{
-            opacity: stage >= 1 ? 1 : 0,
-            transform: stage >= 1 ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(50px)',
-            transition: 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            willChange: 'transform, opacity',
-            WebkitTransform: stage >= 1 ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(50px)',
+            opacity: progress >= 10 ? 1 : 0,
+            transform: progress >= 10 ? 'scale(1)' : 'scale(0.8)',
+            transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
-          {/* Hologram scan effect */}
+          {/* Glow effect */}
           <div 
-            className="absolute inset-0 overflow-hidden rounded-full"
+            className="absolute inset-0 blur-xl"
             style={{
-              opacity: stage >= 2 && stage < 4 ? 1 : 0,
+              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.6), transparent)',
+              opacity: progress >= 50 ? 0.8 : 0,
+              transition: 'opacity 0.6s ease-out',
             }}
-          >
-            <div
-              className="absolute inset-x-0 h-8 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent"
-              style={{
-                animation: stage >= 2 && stage < 4 ? 'scan 2s ease-in-out infinite' : 'none',
-                willChange: 'transform',
-              }}
-            />
-          </div>
+          />
 
-          {/* Main logo */}
-          <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Logo SVG */}
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" className="relative z-10">
             <defs>
-              <linearGradient id="futuristic-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{stopColor: '#3b82f6', stopOpacity: 1}} />
-                <stop offset="50%" style={{stopColor: '#a855f7', stopOpacity: 1}} />
-                <stop offset="100%" style={{stopColor: '#ec4899', stopOpacity: 1}} />
+              <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{stopColor: '#3b82f6'}} />
+                <stop offset="50%" style={{stopColor: '#a855f7'}} />
+                <stop offset="100%" style={{stopColor: '#ec4899'}} />
               </linearGradient>
-              <linearGradient id="futuristic-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{stopColor: '#60a5fa', stopOpacity: 1}} />
-                <stop offset="50%" style={{stopColor: '#c084fc', stopOpacity: 1}} />
-                <stop offset="100%" style={{stopColor: '#f472b6', stopOpacity: 1}} />
-              </linearGradient>
-              
-              {/* Animated gradient for energy effect */}
-              <radialGradient id="energy-gradient">
-                <stop offset="0%" style={{stopColor: '#60a5fa', stopOpacity: 0.8}} />
-                <stop offset="100%" style={{stopColor: '#60a5fa', stopOpacity: 0}} />
-              </radialGradient>
             </defs>
             
-            {/* Outer energy ring - pulses in stage 3+ */}
+            {/* Outer circle */}
             <circle 
-              cx="90" 
-              cy="90" 
-              r="85" 
-              stroke="url(#futuristic-glow)" 
+              cx="60" 
+              cy="60" 
+              r="55" 
+              stroke="url(#logo-grad)" 
               strokeWidth="2" 
               fill="none"
-              style={{
-                opacity: stage >= 3 ? 0.6 : 0,
-                transition: 'opacity 0.6s ease-out',
-                filter: 'blur(1px)',
-              }}
+              strokeDasharray="345"
+              strokeDashoffset={345 - (345 * progress / 100)}
+              style={{ transition: 'stroke-dashoffset 0.1s linear' }}
             />
             
-            {/* Middle ring with draw animation */}
-            <circle 
-              cx="90" 
-              cy="90" 
-              r="75" 
-              stroke="url(#futuristic-gradient)" 
-              strokeWidth="3" 
-              fill="none"
-              style={{
-                strokeDasharray: 471,
-                strokeDashoffset: stage >= 1 ? 0 : 471,
-                transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-            />
-            
-            {/* Inner glow ring */}
-            <circle 
-              cx="90" 
-              cy="90" 
-              r="70" 
-              stroke="url(#futuristic-gradient)" 
-              strokeWidth="1" 
-              fill="none"
-              opacity="0.3"
-              style={{
-                opacity: stage >= 2 ? 0.3 : 0,
-                transition: 'opacity 0.6s ease-out',
-              }}
-            />
-            
-            {/* Hexagon frame */}
+            {/* Inner hexagon */}
             <path
-              d="M 90 25 L 130 50 L 130 100 L 90 125 L 50 100 L 50 50 Z"
-              stroke="url(#futuristic-gradient)"
+              d="M 60 20 L 90 35 L 90 65 L 60 80 L 30 65 L 30 35 Z"
+              stroke="url(#logo-grad)"
               strokeWidth="2"
-              fill="none"
+              fill="rgba(59, 130, 246, 0.1)"
               style={{
-                strokeDasharray: 300,
-                strokeDashoffset: stage >= 2 ? 0 : 300,
-                transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s',
+                opacity: progress >= 30 ? 1 : 0,
+                transition: 'opacity 0.4s ease-out',
               }}
             />
             
-            {/* Center WDA text */}
+            {/* WDA text */}
             <text 
-              x="90" 
-              y="98" 
+              x="60" 
+              y="68" 
               fontFamily="Montserrat, sans-serif" 
-              fontSize="38" 
+              fontSize="24" 
               fontWeight="800" 
               textAnchor="middle" 
-              fill="url(#futuristic-gradient)"
+              fill="url(#logo-grad)"
               style={{
-                opacity: stage >= 2 ? 1 : 0,
-                transition: 'opacity 0.6s ease-out 0.4s',
-                filter: stage >= 3 ? 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.8))' : 'none',
+                opacity: progress >= 40 ? 1 : 0,
+                transition: 'opacity 0.4s ease-out',
               }}
             >
               WDA
             </text>
             
-            {/* Corner tech accents */}
+            {/* Corner dots */}
             {[
-              { x: 35, y: 35 },
-              { x: 145, y: 35 },
-              { x: 35, y: 145 },
-              { x: 145, y: 145 }
+              { x: 20, y: 20 },
+              { x: 100, y: 20 },
+              { x: 20, y: 100 },
+              { x: 100, y: 100 }
             ].map((pos, i) => (
-              <g key={i}>
-                <circle 
-                  cx={pos.x} 
-                  cy={pos.y} 
-                  r="4" 
-                  fill="url(#futuristic-gradient)"
-                  style={{
-                    opacity: stage >= 3 ? 1 : 0,
-                    transition: `opacity 0.4s ease-out ${0.1 * i}s`,
-                  }}
-                />
-                <circle 
-                  cx={pos.x} 
-                  cy={pos.y} 
-                  r="8" 
-                  stroke="url(#futuristic-gradient)" 
-                  strokeWidth="1" 
-                  fill="none"
-                  style={{
-                    opacity: stage >= 3 ? 0.4 : 0,
-                    transition: `opacity 0.4s ease-out ${0.1 * i + 0.2}s`,
-                  }}
-                />
-              </g>
+              <circle 
+                key={i}
+                cx={pos.x} 
+                cy={pos.y} 
+                r="3" 
+                fill="url(#logo-grad)"
+                style={{
+                  opacity: progress >= (60 + i * 5) ? 1 : 0,
+                  transition: 'opacity 0.3s ease-out',
+                }}
+              />
             ))}
-            
-            {/* Energy core (center pulse) */}
-            <circle 
-              cx="90" 
-              cy="90" 
-              r="30" 
-              fill="url(#energy-gradient)"
-              style={{
-                opacity: stage >= 4 ? 0.3 : 0,
-                transition: 'opacity 0.6s ease-out',
-              }}
-            />
           </svg>
+        </div>
 
-          {/* Outer glow effect */}
+        {/* Text */}
+        <div 
+          className="text-center mb-8"
+          style={{
+            opacity: progress >= 50 ? 1 : 0,
+            transform: progress >= 50 ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'all 0.6s ease-out',
+          }}
+        >
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Web Design Agency
+            </span>
+          </h1>
+          <p className="text-blue-400 text-sm md:text-base tracking-widest">
+            LOADING...
+          </p>
+        </div>
+
+        {/* Progress bar */}
+        <div 
+          className="w-64 md:w-80 h-1 bg-gray-800/50 rounded-full overflow-hidden backdrop-blur-sm"
+          style={{
+            opacity: progress >= 30 ? 1 : 0,
+            transition: 'opacity 0.4s ease-out',
+          }}
+        >
           <div 
-            className="absolute inset-0 blur-2xl pointer-events-none"
+            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg shadow-blue-500/50"
             style={{
-              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4), rgba(168, 85, 247, 0.3), transparent)',
-              opacity: stage >= 4 ? 1 : 0,
-              transform: stage >= 4 ? 'scale(1.2)' : 'scale(0.8)',
-              transition: 'all 0.8s ease-out',
-              willChange: 'transform, opacity',
-              WebkitTransform: stage >= 4 ? 'scale(1.2)' : 'scale(0.8)',
+              width: `${progress}%`,
+              transition: 'width 0.1s linear',
             }}
           />
         </div>
 
-        {/* Text with glitch effect */}
+        {/* Percentage */}
         <div 
-          className="relative"
+          className="mt-4 text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
           style={{
-            opacity: stage >= 3 ? 1 : 0,
-            transform: stage >= 3 ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            willChange: 'transform, opacity',
-            WebkitTransform: stage >= 3 ? 'translateY(0)' : 'translateY(30px)',
+            opacity: progress >= 30 ? 1 : 0,
+            transition: 'opacity 0.4s ease-out',
           }}
         >
-          <h1 className="text-4xl md:text-6xl font-black text-center mb-4">
-            <span 
-              className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
-              style={{
-                textShadow: stage >= 4 ? '0 0 20px rgba(59, 130, 246, 0.5)' : 'none',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              WEB DESIGN AGENCY
-            </span>
-          </h1>
-          
-          <p 
-            className="text-lg md:text-xl text-center font-semibold"
-            style={{
-              color: 'rgba(59, 130, 246, 0.9)',
-              textShadow: '0 0 10px rgba(59, 130, 246, 0.5)',
-              letterSpacing: '0.3em',
-            }}
-          >
-            INITIALIZING...
-          </p>
+          {Math.floor(progress)}%
         </div>
-
-        {/* Status bar */}
-        <div 
-          className="absolute bottom-20 left-1/2 w-64"
-          style={{
-            opacity: stage >= 3 ? 1 : 0,
-            transition: 'opacity 0.6s ease-out',
-            transform: 'translateX(-50%)',
-            WebkitTransform: 'translateX(-50%)',
-          }}
-        >
-          <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
-              style={{
-                width: stage >= 4 ? '100%' : stage >= 3 ? '60%' : '0%',
-                transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0 0 10px rgba(59, 130, 246, 0.6)',
-                willChange: 'width',
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Corner brackets (HUD style) */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[
-          { top: '20px', left: '20px', rotate: '0deg' },
-          { top: '20px', right: '20px', rotate: '90deg' },
-          { bottom: '20px', left: '20px', rotate: '270deg' },
-          { bottom: '20px', right: '20px', rotate: '180deg' },
-        ].map((pos, i) => (
-          <div
-            key={i}
-            className="absolute w-8 h-8"
-            style={{
-              ...pos,
-              opacity: stage >= 2 ? 0.6 : 0,
-              transition: `opacity 0.4s ease-out ${i * 0.1}s`,
-              transform: `rotate(${pos.rotate})`,
-              WebkitTransform: `rotate(${pos.rotate})`,
-            }}
-          >
-            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-400 to-transparent" />
-            <div className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-blue-400 to-transparent" />
-          </div>
-        ))}
       </div>
 
       <style>{`
-        @keyframes scan {
-          0% {
-            transform: translateY(-100%);
-          }
-          100% {
-            transform: translateY(280%);
-          }
-        }
-        
-        @-webkit-keyframes scan {
-          0% {
-            -webkit-transform: translateY(-100%);
-          }
-          100% {
-            -webkit-transform: translateY(280%);
-          }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 0.2; }
+          50% { transform: scale(1.1); opacity: 0.3; }
         }
       `}</style>
     </div>

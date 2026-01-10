@@ -71,7 +71,7 @@ export default function FuturisticPortfolio() {
         </div>
 
         {/* Projects grid */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
           {projects.map((project, index) => (
             <a
               key={project.id}
@@ -202,5 +202,6 @@ export default function FuturisticPortfolio() {
     </section>
   );
 }
+
 
 
