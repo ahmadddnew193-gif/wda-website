@@ -25,8 +25,12 @@ const projects = [
 export default function FuturisticPortfolio() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
+  useEffect(() => {
+    console.log('Portfolio mounted, projects count:', projects.length);
+  }, []);
+
   return (
-    <section id="portfolio" className="relative py-20 md:py-32 overflow-hidden">
+    <section id="portfolio" className="relative py-20 md:py-32 overflow-hidden bg-black">
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-black via-blue-950/10 to-black" />
       
@@ -53,77 +57,81 @@ export default function FuturisticPortfolio() {
           </p>
         </div>
 
-        {/* Projects grid - EXPLICITLY TWO COLUMNS ON DESKTOP, SINGLE ON MOBILE */}
+        {/* Projects container with explicit flex on mobile */}
         <div className="w-full max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {projects.map((project) => (
-              <a
-                key={project.id}
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block w-full"
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
-              >
-                {/* Card */}
-                <div className="relative bg-gradient-to-br from-gray-900/50 to-gray-800/30 rounded-2xl overflow-hidden border border-gray-800/50 transition-all duration-300 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/10 hover:scale-[1.02] active:scale-[0.98]">
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 transition-opacity duration-300 ${hoveredProject === project.id ? 'opacity-10' : ''}`} />
+          {/* MOBILE: Flex column stack, DESKTOP: Grid 2 columns */}
+          <div className="flex flex-col md:grid md:grid-cols-2 gap-8">
+            {projects.map((project) => {
+              console.log('Rendering project:', project.title);
+              return (
+                <a
+                  key={project.id}
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block w-full"
+                  onMouseEnter={() => setHoveredProject(project.id)}
+                  onMouseLeave={() => setHoveredProject(null)}
+                >
+                  {/* Card */}
+                  <div className="relative bg-gradient-to-br from-gray-900/50 to-gray-800/30 rounded-2xl overflow-hidden border border-gray-800/50 transition-all duration-300 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/10 hover:scale-[1.02] active:scale-[0.98]">
+                    {/* Gradient overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 transition-opacity duration-300 ${hoveredProject === project.id ? 'opacity-10' : ''}`} />
 
-                  {/* Image */}
-                  <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-                    <img 
-                      src={project.image} 
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
+                    {/* Image */}
+                    <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+                      <img 
+                        src={project.image} 
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
 
-                    {/* Link icon */}
-                    <div className={`absolute top-4 right-4 p-3 rounded-full bg-blue-500 transition-all duration-300 ${hoveredProject === project.id ? 'opacity-100' : 'opacity-0'}`}>
-                      <ExternalLink className="w-5 h-5 text-white" />
+                      {/* Link icon */}
+                      <div className={`absolute top-4 right-4 p-3 rounded-full bg-blue-500 transition-all duration-300 ${hoveredProject === project.id ? 'opacity-100' : 'opacity-0'}`}>
+                        <ExternalLink className="w-5 h-5 text-white" />
+                      </div>
                     </div>
+
+                    {/* Content */}
+                    <div className="p-6 md:p-8">
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tags.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="px-3 py-1 text-xs rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                        {project.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-gray-400 mb-6 leading-relaxed">
+                        {project.description}
+                      </p>
+
+                      {/* Button */}
+                      <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium">
+                        <span>Visit Website</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    {/* Bottom line */}
+                    <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${project.gradient} transition-opacity duration-300 ${hoveredProject === project.id ? 'opacity-100' : 'opacity-0'}`} />
                   </div>
-
-                  {/* Content */}
-                  <div className="p-6 md:p-8">
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tags.map((tag, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1 text-xs rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                      {project.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-gray-400 mb-6 leading-relaxed">
-                      {project.description}
-                    </p>
-
-                    {/* Button */}
-                    <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium">
-                      <span>Visit Website</span>
-                      <ExternalLink className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  {/* Bottom line */}
-                  <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${project.gradient} transition-opacity duration-300 ${hoveredProject === project.id ? 'opacity-100' : 'opacity-0'}`} />
-                </div>
-              </a>
-            ))}
+                </a>
+              );
+            })}
           </div>
         </div>
 
