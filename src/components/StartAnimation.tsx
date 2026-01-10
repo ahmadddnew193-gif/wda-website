@@ -12,6 +12,7 @@ const codeLines = [
 
 export default function StartAnimation() {
   const [show, setShow] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -32,15 +33,21 @@ export default function StartAnimation() {
       });
     }, 30);
 
-    // Auto-hide after animation completes
+    // Start fade out before hiding
+    const fadeTimer = setTimeout(() => {
+      setFadeOut(true);
+    }, 2800);
+
+    // Auto-hide after fade completes
     const timer = setTimeout(() => {
       setShow(false);
       sessionStorage.setItem('hasVisited', 'true');
       window.dispatchEvent(new Event('startAnimationComplete'));
-    }, 3000);
+    }, 3500);
 
     return () => {
       clearInterval(progressInterval);
+      clearTimeout(fadeTimer);
       clearTimeout(timer);
     };
   }, []);
@@ -48,7 +55,7 @@ export default function StartAnimation() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden">
+    <div className={`fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}>
       {/* Animated background matching site style */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-950/30 via-purple-950/20 to-pink-950/30" />
       
@@ -287,3 +294,4 @@ export default function StartAnimation() {
     </div>
   );
 }
+
