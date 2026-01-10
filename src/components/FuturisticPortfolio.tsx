@@ -15,6 +15,13 @@ const projects = [
     gradient: 'from-purple-500 to-pink-500',
     url: 'https://wda-website-demo.pages.dev/',
   },
+  {
+    title: 'WDA Hotel',
+    description: 'Luxurious hotel website featuring room bookings, amenities showcase, and guest services.',
+    icon: '🏨',
+    gradient: 'from-cyan-500 to-teal-500',
+    url: 'https://wda-hotel.pages.dev/',
+  },
 ];
 
 export default function FuturisticPortfolio() {
@@ -114,3 +121,4 @@ export default function FuturisticPortfolio() {
     </div>
   );
 }
+
