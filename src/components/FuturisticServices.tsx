@@ -14,12 +14,6 @@ const services = [
     gradient: 'from-purple-500 to-pink-500',
   },
   {
-    title: 'Mobile Apps',
-    description: 'Native and cross-platform mobile solutions for iOS and Android.',
-    icon: '📱',
-    gradient: 'from-cyan-500 to-blue-500',
-  },
-  {
     title: 'Brand Identity',
     description: 'Comprehensive branding solutions that make your business stand out.',
     icon: '✨',
@@ -121,4 +115,5 @@ export default function FuturisticServices() {
     </div>
   );
 }
+
 
